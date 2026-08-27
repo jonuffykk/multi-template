@@ -1,5 +1,7 @@
 import { AppWindow, Globe, Rocket, Smartphone } from "lucide-react";
 
+import { ExternalLink } from "./external-link";
+
 const stack = [
   {
     name: "Next.js",
@@ -34,28 +36,24 @@ export default function Home() {
 
       <div className="grid w-full max-w-sm gap-3 sm:max-w-2xl sm:grid-cols-3">
         {stack.map(({ name, description, href, icon: Icon }) => (
-          <a
+          <ExternalLink
             key={name}
             href={href}
-            target="_blank"
-            rel="noopener noreferrer"
             className="group flex flex-col items-center gap-2 rounded-xl border border-neutral-200 bg-white p-5 text-center transition-all hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md"
           >
             <Icon className="size-6 text-neutral-400 transition-colors group-hover:text-brand" strokeWidth={1.5} />
             <span className="text-sm font-medium">{name}</span>
             <span className="text-xs text-neutral-500">{description}</span>
-          </a>
+          </ExternalLink>
         ))}
       </div>
 
-      <a
+      <ExternalLink
         href="https://andersonalves.site"
-        target="_blank"
-        rel="noopener noreferrer"
         className="text-xs text-neutral-400 transition-colors hover:text-brand"
       >
         andersonalves.site
-      </a>
+      </ExternalLink>
     </main>
   );
 }
