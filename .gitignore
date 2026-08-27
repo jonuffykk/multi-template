@@ -1,0 +1,12 @@
+node_modules
+out
+.next
+dist
+android
+ios
+src-tauri/target
+src-tauri/gen
+src-tauri/icons/*
+!src-tauri/icons/icon.png
+*.log
+.DS_Store
