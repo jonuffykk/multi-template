@@ -12,6 +12,9 @@ on:
 permissions:
   contents: write
 
+env:
+  NODE_VERSION: 22
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -20,6 +23,14 @@ jobs:
     steps:
       - id: tag
         run: echo "tag=${{ github.event_name == 'push' && github.ref_name || inputs.tag }}" >> "$GITHUB_OUTPUT"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "MultiApp ${{ steps.tag.outputs.tag }}"
+          draft: false
+          prerelease: false
+          generate_release_notes: true
 
   desktop:
     needs: prepare
@@ -32,11 +43,11 @@ jobs:
           - platform: windows-latest
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - uses: dtolnay/rust-toolchain@stable
@@ -63,21 +74,15 @@ jobs:
           prerelease: false
 
   android:
-    needs: [prepare, desktop]
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: gradle
 
       - run: npm ci
 
@@ -88,9 +93,16 @@ jobs:
 
       - run: npx cap sync android
 
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+          cache-dependency-path: android/gradle/wrapper/gradle-wrapper.properties
+
       - name: Build APK
         working-directory: android
-        run: ./gradlew assembleDebug --build-cache
+        run: ./gradlew assembleDebug --build-cache --parallel
 
       - name: Rename APK
         run: cp android/app/build/outputs/apk/debug/app-debug.apk MultiApp-${{ needs.prepare.outputs.tag }}.apk
