@@ -22,7 +22,7 @@
     "react-dom": "^19.2.9"
   },
   "devDependencies": {
-    "@capacitor/android": "^7.0.0",
+    "@capacitor/android": "^7.6.9",
     "@capacitor/cli": "^7.0.0",
     "@capacitor/core": "^7.0.0",
     "@eslint/eslintrc": "^3.2.0",
